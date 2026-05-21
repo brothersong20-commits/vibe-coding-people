@@ -7,8 +7,10 @@ export const metadata = {
   description: "Vibe Coding People 모임의 일정.",
 };
 
-export default function SchedulePage() {
-  const all = getSchedule();
+export const revalidate = 60;
+
+export default async function SchedulePage() {
+  const all = await getSchedule();
   const upcoming = all.filter((s) => s.status !== "완료");
   const past = all.filter((s) => s.status === "완료").reverse();
 

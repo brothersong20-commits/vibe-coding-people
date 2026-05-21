@@ -76,41 +76,46 @@ Phase {X.Y} - {한 줄 요약}
 | **1단계 (로컬)** | ✅ 완료 | 6개 라우트(`/`, `/notices`, `/schedule`, `/projects`, `/contests`, `/about`) + `/projects/[slug]` + 더미 콘텐츠 + DESIGN.md 적용 |
 | **2단계 (배포)** | ✅ 완료 | Git 초기화 + GitHub 푸시(`brothersong20-commits/vibe-coding-people`) + Vercel 자동 배포(https://vibe-coding-people.vercel.app/) |
 | **3단계 (확장)** | ✅ 완료 | 공모전 상세 페이지 `/contests/[slug]` + favicon + `/schedule` 월간 캘린더 그리드 뷰 + `/insights` 라우트(리스트 + 상세 MDX) + 실제 채널 링크(카카오톡 오픈채팅) 연결 |
-| **4단계 (백엔드)** | 진행 예정 | Supabase 도입 (MDX → DB 이관) + Google Auth + 멤버 어드민 폼 |
+| **4.0 (Supabase 인프라)** | ✅ 완료 | Supabase 프로젝트(`vibe-coding-people`, ap-northeast-2) + 콘텐츠 스키마 7테이블 + `lib/supabase/*` 클라이언트 + `lib/content.ts` DB 헬퍼 + react-markdown 본문 + `scripts/seed.ts` 시드 |
+| **4.1 (인증)** | 진행 예정 | Google OAuth(`@supabase/ssr`) + `middleware.ts` 세션 갱신 + `members` 테이블 이메일 화이트리스트 매칭 |
+| **4.2 (어드민)** | 진행 예정 | `/admin` 라우트 + 멤버 어드민 폼(notices/schedule/contests/projects/insights CRUD) + RLS 정책 정교화 |
 
-## 기술 스택 (예정)
+## 기술 스택
 
-- Next.js (App Router) + TypeScript
-- Tailwind CSS (DESIGN.md 토큰 매핑)
+- Next.js (App Router) + TypeScript + React 19
+- Tailwind CSS v4 (DESIGN.md 토큰 매핑)
 - shadcn/ui (베이스 컴포넌트, DESIGN.md 톤으로 오버라이드)
-- `@next/mdx` + `gray-matter` (MDX 콘텐츠)
-- 패키지 매니저: **pnpm**
+- Supabase (Postgres + Auth) — `@supabase/supabase-js`, `@supabase/ssr`
+- 마크다운: `react-markdown` + `remark-gfm` (4.0 이후 본문은 DB `body_md` 컬럼)
+- MDX 인프라(`@next/mdx`, `@mdx-js/*`)는 4.0.x 정리 PR 전까지 보존
+- 패키지 매니저: **npm** (`package-lock.json`)
 
 ## 콘텐츠 추가 가이드
 
-1단계에서 콘텐츠는 저장소 내 파일로 관리한다.
+**4.0 이후 콘텐츠 SOT 는 Supabase 테이블이다.** `content/*.ts` / `content/**/*.mdx` 는 시드 소스로 보존되어 있을 뿐, 사이트는 더 이상 그 파일을 읽지 않는다.
 
-- **공지** — `content/notices.ts` (단일 배열)
-  - 각 항목 필드: `id`, `title`, `date`(YYYY-MM-DD), `category`(공지/이벤트/회고), `summary`
-- **일정** — `content/schedule.ts` (단일 배열)
-  - 각 항목 필드: `id`, `start`, `end`, `title`, `location`, `description`, `status`(예정/진행중/완료), `tags`
-  - 캘린더 호환 구조 — 추후 캘린더 뷰 도입 시 그대로 사용.
-- **프로젝트** — `content/projects/*.mdx`
-  - frontmatter: `title`, `slug`, `summary`(1줄), `tags`(배열), `members`(배열), `thumbnail`(public 경로), `github`(URL, 선택), `demo`(URL, 선택), `order`(숫자)
-  - 본문: MDX (긴 설명, 스크린샷, 코드 블록 등)
-  - 썸네일은 `public/projects/{slug}.png`.
-- **공모전** — `content/contests.ts` (단일 배열, 인덱스/메타) + `content/contests/{id}.mdx` (모임 관점 본문)
-  - 각 항목 필드: `id`, `title`, `host`(주최), `organizer`(주관, 선택), `startDate`(YYYY-MM-DD), `endDate`(YYYY-MM-DD), `prize`(시상 요약), `fields`(분야 배열), `eligibility`(응모 자격 한 줄), `url`(공식 URL), `status`(모집중/예정/마감), `tags`, `summary`(1줄 요약, 선택), `teams`(도전 팀 배열)
-  - `teams[]` 항목 필드: `name`, `members`(배열), `status`(모집중/확정/출품완료), `note`(한 줄, 선택), `githubUrl`(선택), `demoUrl`(선택). 모집 시작 전이면 `teams: []`로 둔다.
-  - 새 공모전 추가 시 같은 `id`로 `content/contests/{id}.mdx`를 함께 만들고, `app/contests/[slug]/page.tsx`의 `contestBodyMap`에 매핑을 추가한다(프로젝트 패턴과 동일).
-- **인사이트** — `content/insights.ts` (단일 배열, 메타) + `content/insights/{slug}.mdx` (본문)
-  - 각 항목 필드: `id`, `slug`(라우트, 1단계에선 `id`와 동일), `title`, `date`(YYYY-MM-DD), `category`("AI 코딩"/"도구"/"워크플로우"/"회고"), `summary`(1줄), `tags`(배열), `author`, `readTime`(분, 수동 입력)
-  - 새 인사이트 추가 시 같은 `slug`로 `content/insights/{slug}.mdx`를 함께 만들고, `app/insights/[slug]/page.tsx`의 `insightBodyMap`에 import + 키를 추가한다.
-  - 카테고리 enum을 늘릴 때는 `components/cards/insight-card.tsx`와 `app/insights/[slug]/page.tsx`의 `categoryTone` 매핑을 같이 갱신한다 (`Record<InsightCategory, string>` 타입이 누락을 잡아준다).
+추가/수정 방법:
+1. (4.0 임시) Supabase Studio (https://supabase.com/dashboard/project/evhfoayahyxyyxxntkjx) 에서 직접 row 편집
+2. (4.0 임시) `content/*.ts` 와 `content/**/*.mdx` 를 갱신 후 `npm run seed` 재실행 (`upsert onConflict='slug'`)
+3. (4.2 이후) `/admin` 폼에서 CRUD
 
-콘텐츠를 새로 추가할 때는 위 스키마를 그대로 따른다. 새 필드가 필요하면 plan을 먼저 작성하고 진행한다.
+### Supabase 테이블 스키마 (요약 — 정확한 정의는 `supabase/migrations/0001_initial_content_schema` 참고)
 
-## 디렉토리 구조 (1단계 목표)
+| 테이블 | 컬럼 (자연키 `slug` + uuid `id`) |
+| --- | --- |
+| `notices` | slug, title, date, category(공지/이벤트/회고), summary, sort_order |
+| `schedule_items` | slug, start_at, end_at?, title, location, description, status(예정/진행중/완료), tags[] |
+| `contests` | slug, title, host, organizer?, start_date, end_date, prize, fields[], eligibility, url, status(모집중/예정/마감), tags[], summary?, body_md, sort_order |
+| `contest_teams` | contest_id(fk), name, members[], status(모집중/확정/출품완료), note?, github_url?, demo_url?, sort_order |
+| `projects` | slug, title, summary, tags[], members[], thumbnail?, github?, demo?, sort_order, body_md |
+| `insights` | slug, title, date, category(AI 코딩/도구/워크플로우/회고), summary, tags[], author, read_time, body_md, sort_order |
+| `members` | email(unique), name?, role(admin/member), google_sub? — 4.1 Auth 매핑 대기 |
+
+- 본문(`body_md`)은 순수 마크다운. JSX 컴포넌트 import 불가. GFM(표, 체크박스)은 지원.
+- 카테고리/상태 enum 을 늘릴 때는 (1) DB `check` 제약 수정 + 마이그레이션, (2) `lib/types.ts` 의 union 타입, (3) UI 의 `categoryTone`/`statusTone` 매핑을 함께 갱신한다.
+- 새 필드가 필요하면 마이그레이션 + `mcp__plugin_supabase_supabase__generate_typescript_types` 재실행 후 `lib/database.types.ts` / `lib/types.ts` / `lib/content.ts` 매퍼를 같이 갱신한다.
+
+## 디렉토리 구조 (4.0 기준)
 
 ```
 Vibe-Coding-People/
@@ -119,41 +124,44 @@ Vibe-Coding-People/
 ├─ PLAN/
 │  └─ YYMMDD_*.md
 ├─ app/
-│  ├─ layout.tsx
-│  ├─ page.tsx
-│  ├─ notices/page.tsx
-│  ├─ schedule/page.tsx
-│  ├─ projects/
-│  │  ├─ page.tsx
-│  │  └─ [slug]/page.tsx
-│  ├─ contests/
-│  │  ├─ page.tsx
-│  │  └─ [slug]/page.tsx
-│  ├─ insights/
-│  │  ├─ page.tsx
-│  │  └─ [slug]/page.tsx
-│  └─ about/page.tsx
+│  ├─ layout.tsx, page.tsx
+│  ├─ notices/page.tsx, schedule/page.tsx, about/page.tsx
+│  ├─ projects/page.tsx + [slug]/page.tsx
+│  ├─ contests/page.tsx + [slug]/page.tsx
+│  └─ insights/page.tsx + [slug]/page.tsx
 ├─ components/
 │  ├─ ui/         # shadcn/ui 베이스
 │  ├─ brand/      # top-nav, footer, hero-band, cta-band
-│  └─ cards/      # feature-card, notice-row, schedule-item
-├─ content/
-│  ├─ notices.ts
-│  ├─ schedule.ts
-│  ├─ contests.ts            # 메타/인덱스
-│  ├─ contests/*.mdx          # 모임 관점 본문
-│  ├─ insights.ts             # 메타/인덱스
-│  ├─ insights/*.mdx          # 인사이트 본문
-│  └─ projects/*.mdx (+ projects.ts 메타)
+│  ├─ cards/      # notice-row, schedule-item, project-card, contest-card, insight-card
+│  └─ schedule/   # schedule-calendar, calendar-cell, schedule-status-dot
+├─ content/                    # 시드 소스 (4.0 이후 SOT 는 DB)
+│  ├─ notices.ts, schedule.ts, contests.ts, projects.ts, insights.ts
+│  └─ {contests,insights,projects}/*.mdx
 ├─ lib/
-│  └─ content.ts  # getNotices, getSchedule, getProjects
+│  ├─ types.ts                 # 도메인 타입 (UI 가 보는 단일 표면)
+│  ├─ database.types.ts        # MCP 생성 — Database 제네릭
+│  ├─ content.ts               # DB 쿼리 헬퍼 (8개)
+│  ├─ date.ts
+│  ├─ markdown-components.tsx  # react-markdown 매핑
+│  └─ supabase/
+│     ├─ server.ts             # createServerClient (RSC)
+│     ├─ client.ts             # createBrowserClient (4.1 대비)
+│     └─ admin.ts              # service_role (server-only)
+├─ scripts/
+│  └─ seed.ts                  # 1회성 시드. `npm run seed` 로 실행
 ├─ public/
-│  ├─ fonts/
-│  └─ projects/
+├─ .env.local                  # 추적 제외
+├─ .env.example
 ├─ tailwind.config.ts
 ├─ package.json
 └─ tsconfig.json
 ```
+
+### Supabase 프로젝트 메모
+- **Project ref**: `evhfoayahyxyyxxntkjx`
+- **URL**: `https://evhfoayahyxyyxxntkjx.supabase.co`
+- **리전**: `ap-northeast-2`
+- **마이그레이션 SOT**: Supabase dashboard 의 SQL Editor 마이그레이션 히스토리. 변경 시 MCP `apply_migration` 사용.
 
 ## 작업 원칙
 

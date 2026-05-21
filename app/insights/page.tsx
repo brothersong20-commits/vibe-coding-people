@@ -1,5 +1,5 @@
 import { InsightCard } from "@/components/cards/insight-card";
-import { getOrderedInsights } from "@/content/insights";
+import { getOrderedInsights } from "@/lib/content";
 
 export const metadata = {
   title: "인사이트 — Vibe Coding People",
@@ -7,8 +7,10 @@ export const metadata = {
     "바이브 코딩으로 사이드 프로젝트를 만들며 모은 AI 코딩 툴, 워크플로우, 회고 인사이트.",
 };
 
-export default function InsightsPage() {
-  const items = getOrderedInsights();
+export const revalidate = 60;
+
+export default async function InsightsPage() {
+  const items = await getOrderedInsights();
 
   return (
     <section

@@ -1,27 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ContestCard } from "@/components/cards/contest-card";
-import {
-  contests,
-  getContestById,
-  type Contest,
-  type ContestStatus,
-  type ContestTeam,
-  type ContestTeamStatus,
-} from "@/content/contests";
+import { getContestById, getOrderedContests } from "@/lib/content";
+import type {
+  ContestStatus,
+  ContestTeam,
+  ContestTeamStatus,
+} from "@/lib/types";
 import { formatKoreanDate } from "@/lib/date";
+import { markdownComponents } from "@/lib/markdown-components";
 
-import McstAiDataBody from "@/content/contests/c-2026-mcst-ai-data.mdx";
-import VercelHackBody from "@/content/contests/c-2026-dummy-vercel-hack.mdx";
-import KoreaAiGrantBody from "@/content/contests/c-2026-dummy-koreaai-grant.mdx";
-
-const contestBodyMap: Record<string, React.ComponentType> = {
-  "c-2026-mcst-ai-data": McstAiDataBody,
-  "c-2026-dummy-vercel-hack": VercelHackBody,
-  "c-2026-dummy-koreaai-grant": KoreaAiGrantBody,
-};
+export const revalidate = 60;
 
 const statusTone: Record<ContestStatus, string> = {
   모집중: "bg-[var(--color-primary)] text-[var(--color-on-primary)]",
@@ -35,8 +28,9 @@ const teamStatusTone: Record<ContestTeamStatus, string> = {
   출품완료: "bg-[var(--color-surface-strong)] text-[var(--color-body)]",
 };
 
-export function generateStaticParams() {
-  return contests.map((c) => ({ slug: c.id }));
+export async function generateStaticParams() {
+  const all = await getOrderedContests();
+  return all.map((c) => ({ slug: c.id }));
 }
 
 export async function generateMetadata({
@@ -45,7 +39,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const contest = getContestById(slug);
+  const contest = await getContestById(slug);
   if (!contest) return {};
   return {
     title: `${contest.title} — Vibe Coding People`,
@@ -59,11 +53,11 @@ export default async function ContestDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const contest = getContestById(slug);
+  const contest = await getContestById(slug);
   if (!contest) notFound();
 
-  const Body = contestBodyMap[contest.id];
-  const others = contests
+  const allContests = await getOrderedContests();
+  const others = allContests
     .filter((c) => c.id !== contest.id && c.status !== "마감")
     .slice(0, 3);
 
@@ -128,14 +122,19 @@ export default async function ContestDetailPage({
         </div>
       </section>
 
-      {Body && (
+      {contest.body && (
         <section
           className="border-b border-[var(--color-hairline)]"
           style={{ paddingTop: 64, paddingBottom: 80 }}
         >
           <div className="mx-auto max-w-[760px] px-6">
             <div className="prose-vcp">
-              <Body />
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={markdownComponents}
+              >
+                {contest.body}
+              </ReactMarkdown>
             </div>
           </div>
         </section>

@@ -1,5 +1,5 @@
 import { ContestCard } from "@/components/cards/contest-card";
-import { contests } from "@/content/contests";
+import { getOrderedContests } from "@/lib/content";
 
 export const metadata = {
   title: "공모전 — Vibe Coding People",
@@ -7,7 +7,10 @@ export const metadata = {
     "함께 도전해볼 만한 공모전 정보. 디자인·AI·문화 데이터 등 다양한 분야의 공모전을 정리합니다.",
 };
 
-export default function ContestsPage() {
+export const revalidate = 60;
+
+export default async function ContestsPage() {
+  const contests = await getOrderedContests();
   const open = contests.filter((c) => c.status !== "마감");
   const closed = contests.filter((c) => c.status === "마감");
 

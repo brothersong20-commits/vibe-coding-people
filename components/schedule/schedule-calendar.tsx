@@ -2,7 +2,7 @@
 
 import { addMonths, isSameDay, startOfMonth, subMonths } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ScheduleItem } from "@/content/schedule";
+import type { ScheduleItem } from "@/lib/types";
 import { buildMonthGrid, indexScheduleByDay } from "@/lib/date";
 import { CalendarCell } from "./calendar-cell";
 import { CalendarHeader } from "./calendar-header";

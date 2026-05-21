@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import type { Contest, ContestStatus } from "@/content/contests";
+import type { Contest, ContestStatus } from "@/lib/types";
 import { formatKoreanDate } from "@/lib/date";
 
 const statusTone: Record<ContestStatus, string> = {

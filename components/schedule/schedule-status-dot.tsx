@@ -1,4 +1,4 @@
-import type { ScheduleStatus } from "@/content/schedule";
+import type { ScheduleStatus } from "@/lib/types";
 
 /**
  * 상태별 칩/도트 시각 매핑. 캘린더 셀과 리스트 카드가 동일한 매핑을 공유한다.

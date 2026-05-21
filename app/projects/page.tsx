@@ -1,13 +1,15 @@
 import { ProjectCard } from "@/components/cards/project-card";
-import { getOrderedProjects } from "@/content/projects";
+import { getOrderedProjects } from "@/lib/content";
 
 export const metadata = {
   title: "프로젝트 — Vibe Coding People",
   description: "Vibe Coding People 멤버들이 만든 사이드 프로젝트 모음.",
 };
 
-export default function ProjectsPage() {
-  const items = getOrderedProjects();
+export const revalidate = 60;
+
+export default async function ProjectsPage() {
+  const items = await getOrderedProjects();
 
   return (
     <section

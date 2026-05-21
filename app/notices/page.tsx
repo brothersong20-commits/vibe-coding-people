@@ -1,13 +1,16 @@
 import { NoticeRow } from "@/components/cards/notice-row";
-import { notices } from "@/content/notices";
+import { getNotices } from "@/lib/content";
 
 export const metadata = {
   title: "공지 — Vibe Coding People",
   description: "Vibe Coding People 모임의 공지사항.",
 };
 
-export default function NoticesPage() {
-  const sorted = [...notices].sort((a, b) => (a.date < b.date ? 1 : -1));
+// DB 콘텐츠가 자주 바뀌지 않으므로 60초 ISR.
+export const revalidate = 60;
+
+export default async function NoticesPage() {
+  const sorted = await getNotices();
 
   return (
     <section

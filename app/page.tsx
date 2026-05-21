@@ -5,20 +5,29 @@ import { NoticeRow } from "@/components/cards/notice-row";
 import { ProjectCard } from "@/components/cards/project-card";
 import { ScheduleItemRow } from "@/components/cards/schedule-item";
 import { ContestCard } from "@/components/cards/contest-card";
-import { notices } from "@/content/notices";
-import { schedule } from "@/content/schedule";
-import { getOrderedProjects } from "@/content/projects";
-import { getOpenContests } from "@/content/contests";
+import {
+  getNotices,
+  getOpenContests,
+  getOrderedProjects,
+  getSchedule,
+} from "@/lib/content";
 
-export default function HomePage() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [notices, schedule, projectsAll, contestsOpen] = await Promise.all([
+    getNotices(),
+    getSchedule(),
+    getOrderedProjects(),
+    getOpenContests(),
+  ]);
+
   const upcomingSchedule = schedule
     .filter((s) => s.status === "예정")
     .slice(0, 3);
-  const recentNotices = [...notices]
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, 3);
-  const featuredProjects = getOrderedProjects().slice(0, 3);
-  const openContests = getOpenContests().slice(0, 2);
+  const recentNotices = notices.slice(0, 3);
+  const featuredProjects = projectsAll.slice(0, 3);
+  const openContests = contestsOpen.slice(0, 2);
 
   return (
     <>

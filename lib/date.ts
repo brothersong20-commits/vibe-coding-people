@@ -6,7 +6,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { ko } from "date-fns/locale";
-import type { ScheduleItem } from "@/content/schedule";
+import type { ScheduleItem } from "@/lib/types";
 
 /**
  * "2026-05-20" 형식의 짧은 한국어 표기. 카드/리스트용.

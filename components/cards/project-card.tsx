@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import type { Project } from "@/content/projects";
+import type { Project } from "@/lib/types";
 
 export function ProjectCard({ project }: { project: Project }) {
   return (

@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import type { ScheduleItem } from "@/content/schedule";
+import type { ScheduleItem } from "@/lib/types";
 import { ScheduleStatusDot } from "./schedule-status-dot";
 
 type Props = {

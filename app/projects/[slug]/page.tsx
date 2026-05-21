@@ -1,25 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "@/components/cards/project-card";
-import { getOrderedProjects, getProjectBySlug } from "@/content/projects";
-import VcpHomepageBody from "@/content/projects/vcp-homepage.mdx";
-import AiRecipeCoachBody from "@/content/projects/ai-recipe-coach.mdx";
-import WhatToEatTodayBody from "@/content/projects/what-to-eat-today.mdx";
-import ClaudeCodeCheatsheetBody from "@/content/projects/claude-code-cheatsheet.mdx";
-import VibeSnippetsBody from "@/content/projects/vibe-snippets.mdx";
+import { getOrderedProjects, getProjectBySlug } from "@/lib/content";
+import { markdownComponents } from "@/lib/markdown-components";
 
-const projectBodyMap: Record<string, React.ComponentType> = {
-  "vcp-homepage": VcpHomepageBody,
-  "ai-recipe-coach": AiRecipeCoachBody,
-  "what-to-eat-today": WhatToEatTodayBody,
-  "claude-code-cheatsheet": ClaudeCodeCheatsheetBody,
-  "vibe-snippets": VibeSnippetsBody,
-};
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return getOrderedProjects().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const all = await getOrderedProjects();
+  return all.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -28,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return {};
   return {
     title: `${project.title} — Vibe Coding People`,
@@ -42,11 +35,11 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  const Body = projectBodyMap[project.slug];
-  const others = getOrderedProjects()
+  const allProjects = await getOrderedProjects();
+  const others = allProjects
     .filter((p) => p.slug !== project.slug)
     .slice(0, 3);
 
@@ -100,7 +93,20 @@ export default async function ProjectDetailPage({
         style={{ paddingTop: 64, paddingBottom: 80 }}
       >
         <div className="mx-auto max-w-[760px] px-6">
-          <div className="prose-vcp">{Body && <Body />}</div>
+          <div className="prose-vcp">
+            {project.body ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={markdownComponents}
+              >
+                {project.body}
+              </ReactMarkdown>
+            ) : (
+              <p className="body-md text-[var(--color-muted)]">
+                본문이 아직 작성되지 않았습니다.
+              </p>
+            )}
+          </div>
         </div>
       </section>
 

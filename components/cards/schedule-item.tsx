@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { ScheduleStatusDot } from "@/components/schedule/schedule-status-dot";
-import type { ScheduleItem as ScheduleItemType } from "@/content/schedule";
+import type { ScheduleItem as ScheduleItemType } from "@/lib/types";
 import { formatScheduleDate, formatScheduleTimeRange } from "@/lib/date";
 
 export function ScheduleItemRow({ item }: { item: ScheduleItemType }) {

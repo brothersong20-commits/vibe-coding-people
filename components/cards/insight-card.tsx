@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import type { Insight, InsightCategory } from "@/content/insights";
+import type { Insight, InsightCategory } from "@/lib/types";
 import { formatKoreanDate } from "@/lib/date";
 
 // 카테고리 → 카드 상단 뱃지 톤. 신규 카테고리 추가 시 여기와

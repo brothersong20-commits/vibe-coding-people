@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import type { Notice } from "@/content/notices";
+import type { Notice } from "@/lib/types";
 import { formatKoreanDate } from "@/lib/date";
 
 export function NoticeRow({ notice }: { notice: Notice }) {
