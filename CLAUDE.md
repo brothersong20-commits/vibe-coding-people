@@ -75,7 +75,7 @@ Phase {X.Y} - {한 줄 요약}
 | --- | --- | --- |
 | **1단계 (로컬)** | ✅ 완료 | 6개 라우트(`/`, `/notices`, `/schedule`, `/projects`, `/contests`, `/about`) + `/projects/[slug]` + 더미 콘텐츠 + DESIGN.md 적용 |
 | **2단계 (배포)** | ✅ 완료 | Git 초기화 + GitHub 푸시(`brothersong20-commits/vibe-coding-people`) + Vercel 자동 배포(https://vibe-coding-people.vercel.app/) |
-| **3단계 (확장)** | 진행 예정 | `/insights` (AI·바이브코딩 정보·꿀팁) + 캘린더 그리드 뷰 옵션 + 공모전 상세 페이지 + 실제 채널 링크 + favicon |
+| **3단계 (확장)** | 부분 완료 | 공모전 상세 페이지 `/contests/[slug]` ✅ + favicon ✅ / 남은 작업: 캘린더 그리드 뷰, `/insights` 라우트, 실제 채널 링크 |
 | **4단계 (백엔드)** | 진행 예정 | Supabase 도입 (MDX → DB 이관) + Google Auth + 멤버 어드민 폼 |
 
 ## 기술 스택 (예정)
@@ -99,8 +99,10 @@ Phase {X.Y} - {한 줄 요약}
   - frontmatter: `title`, `slug`, `summary`(1줄), `tags`(배열), `members`(배열), `thumbnail`(public 경로), `github`(URL, 선택), `demo`(URL, 선택), `order`(숫자)
   - 본문: MDX (긴 설명, 스크린샷, 코드 블록 등)
   - 썸네일은 `public/projects/{slug}.png`.
-- **공모전** — `content/contests.ts` (단일 배열)
-  - 각 항목 필드: `id`, `title`, `host`(주최), `organizer`(주관, 선택), `startDate`(YYYY-MM-DD), `endDate`(YYYY-MM-DD), `prize`(시상 요약), `fields`(분야 배열), `eligibility`(응모 자격 한 줄), `url`(공식 URL), `status`(모집중/예정/마감), `tags`
+- **공모전** — `content/contests.ts` (단일 배열, 인덱스/메타) + `content/contests/{id}.mdx` (모임 관점 본문)
+  - 각 항목 필드: `id`, `title`, `host`(주최), `organizer`(주관, 선택), `startDate`(YYYY-MM-DD), `endDate`(YYYY-MM-DD), `prize`(시상 요약), `fields`(분야 배열), `eligibility`(응모 자격 한 줄), `url`(공식 URL), `status`(모집중/예정/마감), `tags`, `summary`(1줄 요약, 선택), `teams`(도전 팀 배열)
+  - `teams[]` 항목 필드: `name`, `members`(배열), `status`(모집중/확정/출품완료), `note`(한 줄, 선택), `githubUrl`(선택), `demoUrl`(선택). 모집 시작 전이면 `teams: []`로 둔다.
+  - 새 공모전 추가 시 같은 `id`로 `content/contests/{id}.mdx`를 함께 만들고, `app/contests/[slug]/page.tsx`의 `contestBodyMap`에 매핑을 추가한다(프로젝트 패턴과 동일).
 
 콘텐츠를 새로 추가할 때는 위 스키마를 그대로 따른다. 새 필드가 필요하면 plan을 먼저 작성하고 진행한다.
 
@@ -120,7 +122,9 @@ Vibe-Coding-People/
 │  ├─ projects/
 │  │  ├─ page.tsx
 │  │  └─ [slug]/page.tsx
-│  ├─ contests/page.tsx
+│  ├─ contests/
+│  │  ├─ page.tsx
+│  │  └─ [slug]/page.tsx
 │  └─ about/page.tsx
 ├─ components/
 │  ├─ ui/         # shadcn/ui 베이스
@@ -129,7 +133,8 @@ Vibe-Coding-People/
 ├─ content/
 │  ├─ notices.ts
 │  ├─ schedule.ts
-│  ├─ contests.ts
+│  ├─ contests.ts            # 메타/인덱스
+│  ├─ contests/*.mdx          # 모임 관점 본문
 │  └─ projects/*.mdx (+ projects.ts 메타)
 ├─ lib/
 │  └─ content.ts  # getNotices, getSchedule, getProjects

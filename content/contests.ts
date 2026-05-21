@@ -1,5 +1,16 @@
 export type ContestStatus = "모집중" | "예정" | "마감";
 
+export type ContestTeamStatus = "모집중" | "확정" | "출품완료";
+
+export type ContestTeam = {
+  name: string;
+  members: string[];
+  status: ContestTeamStatus;
+  note?: string;
+  githubUrl?: string;
+  demoUrl?: string;
+};
+
 export type Contest = {
   id: string;
   title: string;
@@ -13,6 +24,8 @@ export type Contest = {
   url: string;
   status: ContestStatus;
   tags: string[];
+  summary?: string;
+  teams: ContestTeam[];
 };
 
 export const contests: Contest[] = [
@@ -29,6 +42,9 @@ export const contests: Contest[] = [
     url: "https://www.culture.go.kr/digicon/pages/contest_1",
     status: "모집중",
     tags: ["AI", "문화데이터", "공공"],
+    summary:
+      "공공 문화데이터를 AI와 결합해 새로운 경험을 만드는 공모전. 모임의 첫 공동 도전 후보.",
+    teams: [],
   },
   {
     id: "c-2026-dummy-vercel-hack",
@@ -43,6 +59,9 @@ export const contests: Contest[] = [
     url: "https://vercel.com/",
     status: "예정",
     tags: ["Hackathon", "Next.js", "Vercel"],
+    summary:
+      "모임 주력 스택(Next.js · Vercel · AI SDK) 그대로 출품할 수 있는 가벼운 해커톤.",
+    teams: [],
   },
   {
     id: "c-2026-dummy-koreaai-grant",
@@ -57,9 +76,16 @@ export const contests: Contest[] = [
     url: "https://example.com/korea-ai-grant",
     status: "마감",
     tags: ["OSS", "AI", "Grant"],
+    summary:
+      "이미 마감된 회차. 다음 회차를 노리는 팀이 미리 기록을 쌓을 수 있도록 회고용으로 남겨둠.",
+    teams: [],
   },
 ];
 
 export function getOpenContests(): Contest[] {
   return contests.filter((c) => c.status !== "마감");
+}
+
+export function getContestById(id: string): Contest | undefined {
+  return contests.find((c) => c.id === id);
 }
