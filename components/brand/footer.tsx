@@ -25,6 +25,7 @@ export function Footer() {
               { href: "/notices", label: "공지" },
               { href: "/schedule", label: "일정" },
               { href: "/projects", label: "프로젝트" },
+              { href: "/insights", label: "인사이트" },
               { href: "/contests", label: "공모전" },
             ]}
           />
@@ -40,8 +41,11 @@ export function Footer() {
           <FooterColumn
             title="채널"
             links={[
-              { href: "#", label: "Discord (예정)" },
-              { href: "#", label: "오픈채팅 (예정)" },
+              {
+                href: "https://open.kakao.com/o/gj20g0vi",
+                label: "카카오톡 오픈채팅",
+                external: true,
+              },
             ]}
           />
         </div>
@@ -62,22 +66,36 @@ function FooterColumn({
   links,
 }: {
   title: string;
-  links: { href: string; label: string }[];
+  links: { href: string; label: string; external?: boolean }[];
 }) {
   return (
     <div>
       <div className="caption-uppercase mb-4 text-[var(--color-muted)]">{title}</div>
       <ul className="space-y-2">
-        {links.map((link) => (
-          <li key={link.label}>
-            <Link
-              href={link.href}
-              className="body-sm text-[var(--color-body)] transition-opacity hover:opacity-70"
-            >
-              {link.label}
-            </Link>
-          </li>
-        ))}
+        {links.map((link) =>
+          link.external ? (
+            // 외부 채널은 새 탭에서 열고 보안 속성을 붙인다.
+            <li key={link.label}>
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="body-sm text-[var(--color-body)] transition-opacity hover:opacity-70"
+              >
+                {link.label}
+              </a>
+            </li>
+          ) : (
+            <li key={link.label}>
+              <Link
+                href={link.href}
+                className="body-sm text-[var(--color-body)] transition-opacity hover:opacity-70"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ),
+        )}
       </ul>
     </div>
   );

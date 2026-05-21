@@ -126,16 +126,16 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[960px] px-6">
           <h2 className="display-md mb-4">함께하기</h2>
           <p className="body-tracked mb-8 max-w-[640px] text-[var(--color-body)]">
-            관심 있는 분은 아래 채널로 연락 주세요. 첫 모임 일정과 가벼운 자기소개
-            한 줄을 안내해 드립니다. (외부 채널 정보는 곧 업데이트됩니다.)
+            관심 있는 분은 아래 카카오톡 오픈채팅으로 연락 주세요. 첫 모임 일정과
+            가벼운 자기소개 한 줄을 안내해 드립니다.
           </p>
 
           <div className="flex flex-wrap items-center gap-4">
-            <Button href="#" variant="primary">
-              Discord 참여 (예정)
-            </Button>
-            <Button href="#" variant="secondary">
-              오픈채팅 (예정)
+            <Button
+              href="https://open.kakao.com/o/gj20g0vi"
+              variant="primary"
+            >
+              카카오톡 오픈채팅 참여
             </Button>
           </div>
         </div>

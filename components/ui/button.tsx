@@ -30,8 +30,15 @@ export function Button({
   className?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   if (href) {
+    // 외부 URL(http로 시작)이면 새 탭에서 열고 rel 보안 속성을 붙인다.
+    const external = href.startsWith("http");
     return (
-      <Link href={href} className={cn(base, variants[variant], className)}>
+      <Link
+        href={href}
+        className={cn(base, variants[variant], className)}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+      >
         {children}
       </Link>
     );
