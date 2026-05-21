@@ -36,4 +36,5 @@ next-env.d.ts
 
 # screenshots / playwright artifacts
 vcp-*.png
+live-*.png
 .playwright-mcp/

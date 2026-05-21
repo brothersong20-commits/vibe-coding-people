@@ -1,6 +1,12 @@
 # Vibe Coding People
 
-바이브 코딩으로 사이드 프로젝트를 함께 진행하는 모임의 공식 홈페이지 저장소다. 모임 소개, 공지, 일정, 멤버들의 프로젝트 결과물을 외부에 공유하는 허브 역할을 한다. 단계적으로 기능을 확장하며, 추후 Vercel 배포 + Supabase DB + Google Auth로 확장될 예정이다.
+바이브 코딩으로 사이드 프로젝트를 함께 진행하는 모임의 공식 홈페이지 저장소다. 모임 소개, 공지, 일정, 멤버들의 프로젝트 결과물을 외부에 공유하는 허브 역할을 한다. 단계적으로 기능을 확장하며, 추후 Supabase DB + Google Auth로 확장될 예정이다.
+
+## 배포 / 저장소
+
+- **라이브**: https://vibe-coding-people.vercel.app/
+- **GitHub**: https://github.com/brothersong20-commits/vibe-coding-people
+- **호스팅**: Vercel (GitHub `main` 브랜치 자동 배포 — push 시 자동으로 새 배포 생성, PR 시 Preview URL 생성)
 
 ## Plan 저장 규칙 (중요)
 
@@ -65,12 +71,12 @@ Phase {X.Y} - {한 줄 요약}
 
 ## 단계 로드맵
 
-| 단계 | 산출물 |
-| --- | --- |
-| **1단계 (로컬)** | 6개 라우트(`/`, `/notices`, `/schedule`, `/projects`, `/contests`, `/about`) + `/projects/[slug]` + 더미 콘텐츠 + DESIGN.md 적용 |
-| **2단계** | Git 초기화 + GitHub 푸시 + Vercel 연결 + 실제 콘텐츠 채움 |
-| **3단계** | `/insights` (AI·바이브코딩 정보·꿀팁) + 캘린더 그리드 뷰 옵션 + 공모전 상세 페이지 |
-| **4단계** | Supabase 도입 (MDX → DB 이관) + Google Auth + 멤버 어드민 폼 |
+| 단계 | 상태 | 산출물 |
+| --- | --- | --- |
+| **1단계 (로컬)** | ✅ 완료 | 6개 라우트(`/`, `/notices`, `/schedule`, `/projects`, `/contests`, `/about`) + `/projects/[slug]` + 더미 콘텐츠 + DESIGN.md 적용 |
+| **2단계 (배포)** | ✅ 완료 | Git 초기화 + GitHub 푸시(`brothersong20-commits/vibe-coding-people`) + Vercel 자동 배포(https://vibe-coding-people.vercel.app/) |
+| **3단계 (확장)** | 진행 예정 | `/insights` (AI·바이브코딩 정보·꿀팁) + 캘린더 그리드 뷰 옵션 + 공모전 상세 페이지 + 실제 채널 링크 + favicon |
+| **4단계 (백엔드)** | 진행 예정 | Supabase 도입 (MDX → DB 이관) + Google Auth + 멤버 어드민 폼 |
 
 ## 기술 스택 (예정)
 
