@@ -4,6 +4,7 @@ const NAV_ITEMS: { href: string; label: string }[] = [
   { href: "/notices", label: "공지" },
   { href: "/schedule", label: "일정" },
   { href: "/projects", label: "프로젝트" },
+  { href: "/insights", label: "인사이트" },
   { href: "/contests", label: "공모전" },
   { href: "/about", label: "소개" },
 ];
