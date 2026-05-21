@@ -34,7 +34,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# screenshots / playwright artifacts
-vcp-*.png
-live-*.png
+# screenshots / playwright artifacts (루트에 떨어진 임시 캡처만 무시 — public/ 안의 정식 자산은 추적)
+/vcp-*.png
+/live-*.png
 .playwright-mcp/

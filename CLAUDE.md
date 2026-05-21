@@ -115,6 +115,17 @@ Phase {X.Y} - {한 줄 요약}
 - 카테고리/상태 enum 을 늘릴 때는 (1) DB `check` 제약 수정 + 마이그레이션, (2) `lib/types.ts` 의 union 타입, (3) UI 의 `categoryTone`/`statusTone` 매핑을 함께 갱신한다.
 - 새 필드가 필요하면 마이그레이션 + `mcp__plugin_supabase_supabase__generate_typescript_types` 재실행 후 `lib/database.types.ts` / `lib/types.ts` / `lib/content.ts` 매퍼를 같이 갱신한다.
 
+### 프로젝트 썸네일 추가 절차
+
+`projects` 카드 상단 이미지는 `project.thumbnail` 값이 있으면 `next/image` 로 렌더되고, 없으면 그라데이션 fallback 이 보인다(`components/cards/project-card.tsx`). 새 썸네일을 추가하려면:
+
+1. 자체 사이트면 Playwright 로 1280×720 viewport 캡처 (또는 디자인된 정적 이미지 준비).
+2. `public/projects/{slug}.png` 로 저장 (slug 와 정확히 일치).
+3. **Supabase `projects.thumbnail` 컬럼** 을 `/projects/{slug}.png` 로 update (SOT).
+4. `content/projects.ts` 시드의 같은 항목에도 `thumbnail` 필드를 추가 — 시드 재실행 시 일관성 유지를 위해.
+
+외부 도메인 이미지를 쓰려면 `next.config.mjs` 의 `images.remotePatterns` 에 호스트를 등록한다. 로컬 `public/` 자산은 추가 설정 필요 없음.
+
 ## 디렉토리 구조 (4.0 기준)
 
 ```
@@ -150,6 +161,7 @@ Vibe-Coding-People/
 ├─ scripts/
 │  └─ seed.ts                  # 1회성 시드. `npm run seed` 로 실행
 ├─ public/
+│  └─ projects/{slug}.png      # 프로젝트 카드 썸네일 (1280×720 권장)
 ├─ .env.local                  # 추적 제외
 ├─ .env.example
 ├─ tailwind.config.ts
