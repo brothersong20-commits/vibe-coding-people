@@ -75,7 +75,7 @@ Phase {X.Y} - {한 줄 요약}
 | --- | --- | --- |
 | **1단계 (로컬)** | ✅ 완료 | 6개 라우트(`/`, `/notices`, `/schedule`, `/projects`, `/contests`, `/about`) + `/projects/[slug]` + 더미 콘텐츠 + DESIGN.md 적용 |
 | **2단계 (배포)** | ✅ 완료 | Git 초기화 + GitHub 푸시(`brothersong20-commits/vibe-coding-people`) + Vercel 자동 배포(https://vibe-coding-people.vercel.app/) |
-| **3단계 (확장)** | 거의 완료 | 공모전 상세 페이지 `/contests/[slug]` ✅ + favicon ✅ + `/schedule` 월간 캘린더 그리드 뷰 ✅ + `/insights` 라우트(리스트 + 상세 MDX) ✅ / 남은 작업: 실제 채널 링크 |
+| **3단계 (확장)** | ✅ 완료 | 공모전 상세 페이지 `/contests/[slug]` + favicon + `/schedule` 월간 캘린더 그리드 뷰 + `/insights` 라우트(리스트 + 상세 MDX) + 실제 채널 링크(카카오톡 오픈채팅) 연결 |
 | **4단계 (백엔드)** | 진행 예정 | Supabase 도입 (MDX → DB 이관) + Google Auth + 멤버 어드민 폼 |
 
 ## 기술 스택 (예정)
