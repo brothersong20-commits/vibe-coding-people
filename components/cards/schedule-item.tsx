@@ -1,17 +1,14 @@
 import { Badge } from "@/components/ui/badge";
+import { ScheduleStatusDot } from "@/components/schedule/schedule-status-dot";
 import type { ScheduleItem as ScheduleItemType } from "@/content/schedule";
 import { formatScheduleDate, formatScheduleTimeRange } from "@/lib/date";
 
-const statusTone: Record<ScheduleItemType["status"], string> = {
-  예정: "bg-[var(--color-primary)] text-[var(--color-on-primary)]",
-  진행중:
-    "bg-[var(--color-semantic-success)] text-[var(--color-on-primary)]",
-  완료: "bg-[var(--color-surface-strong)] text-[var(--color-muted)]",
-};
-
 export function ScheduleItemRow({ item }: { item: ScheduleItemType }) {
   return (
-    <article className="border-b border-[var(--color-hairline)] py-6 last:border-b-0">
+    <article
+      id={`schedule-${item.id}`}
+      className="scroll-mt-24 border-b border-[var(--color-hairline)] py-6 transition-shadow last:border-b-0"
+    >
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-8">
         <div className="md:w-[140px] md:shrink-0">
           <div className="display-sm" style={{ fontWeight: 400 }}>
@@ -23,11 +20,7 @@ export function ScheduleItemRow({ item }: { item: ScheduleItemType }) {
         </div>
         <div className="flex-1">
           <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span
-              className={`inline-flex items-center rounded-full px-[10px] py-[4px] caption-uppercase ${statusTone[item.status]}`}
-            >
-              {item.status}
-            </span>
+            <ScheduleStatusDot status={item.status} variant="chip" />
             {item.tags.map((tag) => (
               <Badge key={tag} variant="soft">
                 {tag}
